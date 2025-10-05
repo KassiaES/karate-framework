@@ -13,7 +13,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>15</maven.compiler.source>
         <maven.compiler.target>15</maven.compiler.target>
-        <karate.version>1.4.1</karate.version>
+        <karate.version>1.4.1</karate.version> <!-- versão mais estável para JUnit 5 -->
         <junit.jupiter.version>5.9.2</junit.jupiter.version>
     </properties>
 
@@ -26,7 +26,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Karate Core -->
+        <!-- Opcional: para testes de UI com Selenium/WebDriver -->
         <dependency>
             <groupId>com.intuit.karate</groupId>
             <artifactId>karate-core</artifactId>
@@ -49,18 +49,25 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- WebDriver Manager -->
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
             <version>5.5.1</version>
         </dependency>
 
+        <!-- Dependências para Performance Testing -->
+        <dependency>
+            <groupId>com.intuit.karate</groupId>
+            <artifactId>karate-gatling</artifactId>
+            <version>${karate.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compiler Plugin -->
+            <!-- Plugin para compilação -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -70,8 +77,8 @@
                     <target>15</target>
                 </configuration>
             </plugin>
-            
-            <!-- Surefire Plugin para testes -->
+
+            <!-- Plugin para testes unitários e funcionais -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -81,6 +88,45 @@
                         <include>**/*Test*.java</include>
                         <include>**/*Runner.java</include>
                     </includes>
+                    <systemPropertyVariables>
+                        <karate.env>test</karate.env>
+                        <karate.options>--tags ~@performance</karate.options>
+                    </systemPropertyVariables>
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin separado para testes de performance -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <includes>
+                        <include>**/*PerformanceTest*.java</include>
+                    </includes>
+                    <systemPropertyVariables>
+                        <karate.env>perf</karate.env>
+                        <karate.options>--tags @performance</karate.options>
+                    </systemPropertyVariables>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Plugin do Gatling para testes de performance -->
+            <plugin>
+                <groupId>io.gatling</groupId>
+                <artifactId>gatling-maven-plugin</artifactId>
+                <version>4.3.7</version>
+                <configuration>
+                    <simulationClass>performance.SimpleGatlingTest</simulationClass>
                 </configuration>
             </plugin>
 

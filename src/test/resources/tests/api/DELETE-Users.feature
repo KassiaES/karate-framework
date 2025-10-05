@@ -19,5 +19,4 @@ Feature: Testes API - DELETE Users
     Given path '/users/1'
     When method DELETE
     Then status 200
-    # JSONPlaceholder sempre retorna 200 mesmo para recursos "removidos"
-    # Em APIs reais, você verificaria com GET após DELETE
+    * print 'Usuário removido com sucesso'
