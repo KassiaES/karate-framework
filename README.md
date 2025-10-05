@@ -4,7 +4,7 @@
 
 ## 📋 Sobre o Projeto
 
-Este repositório contém estudos práticos do **Karate Framework**, uma ferramenta poderosa para testes de **API** e **UI** em uma única solução. O projeto demonstra implementações de testes automatizados organizados e estruturados.
+Este repositório contém estudos práticos do **Karate Framework**, uma ferramenta poderosa para testes de **API**, **UI** e **Performance** em uma única solução. O projeto demonstra implementações de testes automatizados organizados e estruturados.
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -13,6 +13,7 @@ Este repositório contém estudos práticos do **Karate Framework**, uma ferrame
 - **JUnit 5** - Execução de testes
 - **Chrome WebDriver** - Testes de UI
 - **JSONPlaceholder API** - API para testes
+- **HTTPBin** - Testes de performance
 
 ## 📁 Estrutura do Projeto
 
@@ -21,25 +22,29 @@ src/
 ├── test/
 │   ├── java/
 │   │   └── tests/
-│   │       ├── AllTests.java          # Executor principal
+│   │       ├── AllTests.java                      # Executor principal
 │   │       ├── api/
-│   │       │   └── ApiTests.java      # Testes de API
-│   │       └── ui/
-│   │           ├── UiTests.java       # Testes de UI
-│   │           ├── DropdownTest.java  # Teste específico dropdown
-│   │           ├── MenuTest.java      # Teste específico menu
-│   │           └── LoginTest.java     # Teste específico login
+│   │       │   └── ApiTests.java                  # Testes de API
+│   │       ├── ui/
+│   │       │   ├── UiTests.java                   # Testes de UI
+│   │       │   ├── DropdownTest.java              # Teste específico dropdown
+│   │       │   ├── MenuTest.java                  # Teste específico menu
+│   │       │   └── LoginTest.java                 # Teste específico login
+│   │       └── performance/
+│   │           └── CreateUserPerformanceRunner.java # Testes de performance
 │   └── resources/
 │       └── tests/
-│           ├── api/                   # Features de API
+│           ├── api/                               # Features de API
 │           │   ├── GET-Users.feature
 │           │   ├── POST-Users.feature
 │           │   ├── PUT-Users.feature
 │           │   └── DELETE-Users.feature
-│           └── ui/                    # Features de UI
-│               ├── Dropdown.feature
-│               ├── Menu.feature
-│               └── Login.feature
+│           ├── ui/                                # Features de UI
+│           │   ├── Dropdown.feature
+│           │   ├── Menu.feature
+│           │   └── Login.feature
+│           └── performance/                       # Features de Performance
+│               └── CreateUserPerformance.feature
 ```
 
 ## 🔧 Instalação e Configuração
@@ -65,6 +70,9 @@ mvn test -Dtest=ApiTests
 # Executar apenas testes de UI
 mvn test -Dtest=UiTests
 
+# Executar testes de performance
+mvn test -Dtest=CreateUserPerformanceRunner
+
 # Executar teste específico
 mvn test -Dtest=ApiTests#testGetUsers
 ```
@@ -86,23 +94,6 @@ target/karate-reports/karate-summary.html
 - **PUT** `/users/{id}` - Atualizar usuário
 - **DELETE** `/users/{id}` - Remover usuário
 
-### Exemplo de Teste GET
-
-```karate
-Feature: Testes API - GET Users
-
-  Background:
-    * url 'https://jsonplaceholder.typicode.com'
-
-  Scenario: GET - Buscar todos os usuários
-    Given path '/users'
-    When method GET
-    Then status 200
-    And match response == '#array'
-    And match response[0].id == '#number'
-    And match response[0].name == '#string'
-```
-
 ## 🖥️ Testes de UI
 
 ### Sites Testados
@@ -115,50 +106,36 @@ Feature: Testes API - GET Users
 - **Menu Flutuante** - Scroll e interação
 - **Login** - Autenticação (planejado)
 
-### Exemplo de Teste UI
+## ⚡ Testes de Performance
 
-```karate
-Feature: Testes de UI para Dropdown
+### Objetivo
 
-  Background:
-    * configure driver = { type: 'chrome', headless: true }
-    Given driver 'https://the-internet.herokuapp.com/dropdown'
+Os testes de performance validam a capacidade de resposta da aplicação sob diferentes cargas de trabalho, garantindo que a aplicação mantenha performance aceitável.
 
-  Scenario: Teste simples dropdown
-    And match exists('#dropdown') == true
-    When select('#dropdown', '1')
-    Then delay(500)
-    * def selectedText = script('#dropdown', "_.options[_.selectedIndex].text")
-    And match selectedText == ' Option 1'
-```
+### Implementação Atual
 
-## 📚 Conceitos Aprendidos
+- **Endpoint Testado**: `https://httpbin.org/post`
+- **Cenário**: Criação de usuários
+- **Configuração**: 3 threads paralelas
+- **Dados**: 5 cenários com dados inline
+- **Validação**: Timeout de 30 segundos
 
-### Karate Syntax
-- `*` - Configurações e JavaScript
-- `Given/When/Then/And` - Steps BDD
-- `match` - Validações
-- `script()` - Execução JavaScript no browser
+### Métricas Coletadas
 
-### Organização
-- Separação clara entre testes de API e UI
-- Background para configurações comuns
-- Múltiplos cenários por feature
-- Classes Java para execução organizada
-
-## 🎯 Próximos Passos
-
-- [ ] Implementar testes de login completos
-- [ ] Adicionar testes de formulários
-- [ ] Implementar data-driven tests
-- [ ] Configurar CI/CD
-- [ ] Adicionar testes de performance
+- **Features totais**: Número total de features executadas
+- **Features passadas**: Número de features que passaram
+- **Features falhadas**: Número de features que falharam
+- **Tempo total**: Tempo total de execução em milissegundos
+- **Threads paralelas**: Número de threads executando simultaneamente
+- **Response time**: Tempo de resposta individual por requisição
 
 ## 📖 Recursos Úteis
 
 - [Documentação Oficial do Karate](https://github.com/karatelabs/karate)
 - [JSONPlaceholder API](https://jsonplaceholder.typicode.com/)
+- [HTTPBin API](https://httpbin.org/)
 - [The Internet Herokuapp](https://the-internet.herokuapp.com/)
+- [Karate Performance Testing](https://github.com/karatelabs/karate/tree/master/karate-gatling)
 
 ## 👨‍💻 Autor
 
